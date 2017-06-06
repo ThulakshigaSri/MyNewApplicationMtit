@@ -15,10 +15,77 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    Button button;
+
+    EditText editText,editText2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                    Manifest.permission.SEND_SMS)) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.SEND_SMS}, 1);
+            } else {
+
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.SEND_SMS}, 1);
+
+            }
+
+        } else {
+            // nothing to do
+
+        }
+
+
+        button=(Button) findViewById(R.id.button3);
+        editText=(EditText) findViewById(R.id.txt_Number);
+        editText2=(EditText) findViewById(R.id.Txt_text);
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String number =editText.getText().toString();
+                String sms =editText2.getText().toString();
+
+
+                try{
+
+                    SmsManager smsManager =SmsManager.getDefault();
+                    smsManager.sendTextMessage(number, null,sms,null,null);
+                    Toast.makeText(MainActivity.this,"Sent!!",Toast.LENGTH_SHORT).show();
+
+                }catch (Exception e)
+                {
+                    Toast.makeText(MainActivity.this,"Failed!!",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(MainActivity.this,
+                            Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this,"Permission Granted!",Toast.LENGTH_SHORT).show();
+
+                    }
+                }else{
+                    Toast.makeText(this,"Permission Granted!",Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+        }
+    }
 }
